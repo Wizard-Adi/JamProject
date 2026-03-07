@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, Damagable
 {
     private Rigidbody2D _rigidBody;
     private Animator _anim;
@@ -13,13 +13,14 @@ public class Player : MonoBehaviour
     private float _playerSpeed = 3.0f;
     private Vector2 _playerMovement;
 
-    
-
+    public int Health{get;set;}
     void Awake()
     {
         _rigidBody = GetComponent<Rigidbody2D>();
         _anim = GetComponentInChildren<Animator>();
         _sprite = GetComponentInChildren<SpriteRenderer>();
+
+        Health = 5;
     }
 
     private void Update()
@@ -61,6 +62,24 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             _anim.SetTrigger("Attack");
+        }
+    }
+
+    public void Damage()
+    {
+        Debug.Log("player got hit !");
+        Health--;
+        Debug.Log($"current Health {Health}");
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision != null)
+        {
+            if (collision.tag == "EnemyAttack")
+            {
+                Damage();
+            }
         }
     }
 }
