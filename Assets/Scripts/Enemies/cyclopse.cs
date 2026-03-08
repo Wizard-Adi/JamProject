@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class cyclopse : MonoBehaviour
+public class cyclopse : MonoBehaviour, Damagable
 {
+
+    public int Health { get; set; }
+
     private Animator _anim;
 
     [SerializeField]
@@ -29,8 +33,23 @@ public class cyclopse : MonoBehaviour
 
     private void Start()
     {
+
+        Health = 10;
+
         _anim = GetComponentInChildren<Animator>();
 
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        GameObject shelterObject = GameObject.FindGameObjectWithTag("Shelter");
+
+        if (playerObj != null && shelterObject != null )
+        {
+            player = playerObj.transform;
+            shelter = shelterObject.transform;
+        }
+        if (_spriteTransform == null)
+        {
+            _spriteTransform = GetComponentInChildren<SpriteRenderer>().transform;
+        }
         //_currentSprite = GetComponentInChildren<SpriteRenderer>();
         //laserSprite = LazerObject.GetComponent<SpriteRenderer>();
 
@@ -127,5 +146,45 @@ public class cyclopse : MonoBehaviour
 
         _isBusy = false;
         _targetReached = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other != null && other.gameObject.tag == "PlayerAttack")
+        {
+            //_isBusy = true;
+            Damage();
+        }
+    }
+
+    public void Damage()
+    {
+        _anim.SetBool("PlayIdle", false);
+        _anim.SetBool("FireLazer", false);
+        _anim.SetBool("AtTarget", false);
+
+        Health--;
+
+        Debug.Log($"Cyclopse Health: {Health}");
+
+        if (Health < 1)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        StartCoroutine(GotHit());
+    }
+
+    IEnumerator GotHit()
+    {
+        _anim.SetTrigger("Hit");
+
+        yield return new WaitForSeconds(0.4f);
+
+        _anim.SetBool("PlayIdle", true);
+
+        yield return new WaitForSeconds(1.0f);
+
+        //_isBusy = false;
     }
 }

@@ -6,12 +6,20 @@ using UnityEngine.Animations;
 
 public class Player : MonoBehaviour, Damagable
 {
+    public UIManager P_hp;
+
     private Rigidbody2D _rigidBody;
     private Animator _anim;
     private SpriteRenderer _sprite;
     [SerializeField]
     private float _playerSpeed = 3.0f;
     private Vector2 _playerMovement;
+
+    public float dashSpeed = 20f;
+    public float dashDuration = 0.20f;
+    public float dashCooldown = 1f;
+    bool isDashing = false;
+    bool canDash = false;
 
     public int Health{get;set;}
     void Awake()
@@ -21,11 +29,23 @@ public class Player : MonoBehaviour, Damagable
         _sprite = GetComponentInChildren<SpriteRenderer>();
 
         Health = 5;
+        P_hp.playerHealth = Health;
+
+        canDash = true;
     }
 
     private void Update()
     {
+
+        if (isDashing)
+            return;
+
         //_rigidBody.velocity = _playerMovement * _playerSpeed;
+        
+        if (Input.GetKeyDown(KeyCode.Space) && canDash)
+        {
+            StartCoroutine(Dash());
+        }
 
         PlayerMovement();
         Attack();
@@ -33,6 +53,9 @@ public class Player : MonoBehaviour, Damagable
     
     private void PlayerMovement()
     {
+        if (isDashing)
+            return;
+
         _rigidBody.velocity = _playerMovement * _playerSpeed;
 
         if (_playerMovement.x > 0)
@@ -67,9 +90,10 @@ public class Player : MonoBehaviour, Damagable
 
     public void Damage()
     {
-        Debug.Log("player got hit !");
+        //Debug.Log("player got hit !");
         Health--;
-        Debug.Log($"current Health {Health}");
+        P_hp.playerHealth = Health;
+        Debug.Log($"players current Health {Health}");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -81,5 +105,17 @@ public class Player : MonoBehaviour, Damagable
                 Damage();
             }
         }
+    }
+
+    private IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+        _rigidBody.velocity = new Vector2(_playerMovement.x * dashSpeed, _playerMovement.y* dashSpeed);
+        yield return new WaitForSeconds(dashDuration);
+        isDashing = false;
+
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
 }
