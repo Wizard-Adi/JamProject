@@ -29,9 +29,9 @@ public class GGscript : MonoBehaviour, Damagable
     private bool _isBusy = false;
     private bool _targetReached = false;
 
-    private AudioSource _audioSourceG;
-    public AudioClip damage;
-    public AudioClip attack;
+    //private AudioSource _audioSourceG;
+    //public AudioClip damage;
+    //public AudioClip attack;
 
     private void Start()
     {
@@ -39,7 +39,7 @@ public class GGscript : MonoBehaviour, Damagable
         Health = 5;
 
         _anim = GetComponentInChildren<Animator>();
-        _audioSourceG = GetComponent<AudioSource>();
+        //_audioSourceG = GetComponent<AudioSource>();
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         GameObject shelterObject = GameObject.FindGameObjectWithTag("Shelter");
@@ -139,7 +139,7 @@ public class GGscript : MonoBehaviour, Damagable
         // for laser
         _anim.SetBool("CanAttack", true);
 
-        PlaySFX(attack);
+        //PlaySFX(attack);
 
         //LazerObject.SetActive(true);
 
@@ -175,7 +175,7 @@ public class GGscript : MonoBehaviour, Damagable
 
         Health--;
 
-        PlaySFX(damage);
+        //PlaySFX(damage);
 
         Debug.Log($"golum Health: {Health}");
 
@@ -200,9 +200,9 @@ public class GGscript : MonoBehaviour, Damagable
         //_isBusy = false;
     }
 
-    void PlaySFX(AudioClip clip)
-    {
-        _audioSourceG.clip = clip;
-        _audioSourceG.Play();
-    }
+    //void PlaySFX(AudioClip clip)
+    //{
+    //    _audioSourceG.clip = clip;
+    //    _audioSourceG.Play();
+    //}
 }

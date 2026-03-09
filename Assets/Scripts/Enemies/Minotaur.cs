@@ -29,9 +29,9 @@ public class Minotaur : MonoBehaviour, Damagable
     private bool _isBusy = false;
     private bool _targetReached = false;
 
-    private AudioSource _audioSourceM;
-    public AudioClip damage;
-    public AudioClip attack;
+    //private AudioSource _audioSourceM;
+    //public AudioClip damage;
+    //public AudioClip attack;
 
     private void Start()
     {
@@ -39,7 +39,7 @@ public class Minotaur : MonoBehaviour, Damagable
         Health = 5;
 
         _anim = GetComponentInChildren<Animator>();
-        _audioSourceM = GetComponent<AudioSource>();
+        //_audioSourceM = GetComponent<AudioSource>();
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         GameObject shelterObject = GameObject.FindGameObjectWithTag("Shelter");
@@ -138,7 +138,7 @@ public class Minotaur : MonoBehaviour, Damagable
 
         // for laser
         _anim.SetBool("CanAttack", true);
-        PlaySFX(attack);
+        //PlaySFX(attack);
 
         //LazerObject.SetActive(true);
 
@@ -174,7 +174,7 @@ public class Minotaur : MonoBehaviour, Damagable
 
         Health--;
 
-        PlaySFX(damage);
+        //PlaySFX(damage);
 
         Debug.Log($"golum Health: {Health}");
 
@@ -200,9 +200,9 @@ public class Minotaur : MonoBehaviour, Damagable
     }
 
 
-    void PlaySFX(AudioClip clip)
-    {
-        _audioSourceM.clip = clip;
-        _audioSourceM.Play();
-    }
+    //void PlaySFX(AudioClip clip)
+    //{
+    //    _audioSourceM.clip = clip;
+    //    _audioSourceM.Play();
+    //}
 }

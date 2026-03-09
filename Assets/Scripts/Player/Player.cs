@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour, Damagable
 {
     public UIManager P_hp;
     public SpawnManager P_dead;
+    public PauseMenu deadinfo;
 
     private Rigidbody2D _rigidBody;
     private Animator _anim;
@@ -48,16 +50,24 @@ public class Player : MonoBehaviour, Damagable
     {
         _ChangeMood += Time.deltaTime;
 
-        if (isDashing)
-            return;
-
-        //_rigidBody.velocity = _playerMovement * _playerSpeed;
-
         if (_ChangeMood >= 15.0f)
         {
             _ChangeMood = 0;
             PlayerMood();
         }
+
+        BoundaryCheck();
+
+        if (isDashing)
+            return;
+
+        //_rigidBody.velocity = _playerMovement * _playerSpeed;
+
+        //if (_ChangeMood >= 15.0f)
+        //{
+        //    _ChangeMood = 0;
+        //    PlayerMood();
+        //}
 
         
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
@@ -68,7 +78,28 @@ public class Player : MonoBehaviour, Damagable
         PlayerMovement();
         Attack();
     }
-    
+
+    void BoundaryCheck()
+    {
+        if (transform.position.x <= -9.7f)
+        {
+            transform.position = new Vector2(-9.3f, transform.position.y);
+        }
+        else if (transform.position.x >= 21f)
+        {
+            transform.position = new Vector2(20f, transform.position.y);
+        }
+        
+        if (transform.position.y <= -7.1f)
+        {
+            transform.position = new Vector2(transform.position.x, -7f);
+        }
+        else if (transform.position.y >= 9.5f)
+        {
+            transform.position = new Vector2(transform.position.x, 9f);
+        }
+    }
+
     private void PlayerMovement()
     {
         if (isDashing)
@@ -130,8 +161,13 @@ public class Player : MonoBehaviour, Damagable
         if (Health <=0)
         {
             P_dead.OnPlayerDeath();
+
+            deadinfo.PlayerDead = true;
+
             Destroy(gameObject);
-            Application.Quit();
+            //Application.Quit();
+
+            //SceneManager.LoadScene("MainMenu");
         }
 
         Debug.Log($"players current Health {Health}");

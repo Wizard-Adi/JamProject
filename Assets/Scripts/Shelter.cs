@@ -8,10 +8,11 @@ public class Shelter : MonoBehaviour, Damagable
     //public SpriteRenderer _shelterSprite;
     public UIManager shelterHP;
     public SpawnManager EnemiesSpawn;
+    public PauseMenu destroyinfo;
 
-    [SerializeField]
-    public GameObject[] Shelters;
-    private int i = 0;
+    //[SerializeField]
+    //public GameObject[] Shelters;
+    //private int i = 0;
 
     public int Health { get; set; }
 
@@ -36,7 +37,8 @@ public class Shelter : MonoBehaviour, Damagable
         if (collision != null && collision.tag == "EnemyAttack")
         {
             Damage();
-            ShowShelter();
+
+            //ShowShelter();
         }
     }
     public void Damage()
@@ -46,37 +48,43 @@ public class Shelter : MonoBehaviour, Damagable
 
         if (Health <= 0)
         {
-            Destroy(gameObject);
+            destroyinfo.ShelterDestroyed = true;
+
+            //Destroy(gameObject);
+
             EnemiesSpawn.OnShelterDestroy();
-            Application.Quit();
+
+            //destroyinfo.ShelterDestroyed = true;
+
+            //Application.Quit();
         }
     }
 
-    void ShowShelter()
-    {
-        if (Health >= 8)
-        {
-            Shelters[i].SetActive(true);
-            i++;
-        }
-        else if (Health == 7)
-        {
-            Shelters[i - 1].SetActive(false);
-            Shelters[i].SetActive(true);
-            i++;
-        }
-        else if (Health == 6)
-        {
-            Shelters[i - 1].SetActive(false);
-            Shelters[i].SetActive(true);
-            i++;
-        }
-        else if (Health <= 5)
-        {
-            Shelters[i - 1].SetActive(false);
-            Shelters[i].SetActive(true);
-            i++;
-        }
-    }
+    //void ShowShelter()
+    //{
+    //    if (Health >= 8)
+    //    {
+    //        Shelters[i].SetActive(true);
+    //        i++;
+    //    }
+    //    else if (Health == 7)
+    //    {
+    //        Shelters[i - 1].SetActive(false);
+    //        Shelters[i].SetActive(true);
+    //        i++;
+    //    }
+    //    else if (Health == 6)
+    //    {
+    //        Shelters[i - 1].SetActive(false);
+    //        Shelters[i].SetActive(true);
+    //        i++;
+    //    }
+    //    else if (Health <= 5)
+    //    {
+    //        Shelters[i - 1].SetActive(false);
+    //        Shelters[i].SetActive(true);
+    //        i++;
+    //    }
+    //}
     
 }
