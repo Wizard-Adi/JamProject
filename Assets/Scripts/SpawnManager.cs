@@ -60,4 +60,9 @@ public class SpawnManager : MonoBehaviour
     {
         _stopSpawning = true;
     }
+
+    public void OnShelterDestroy()
+    {
+        _stopSpawning = true;
+    }
 }

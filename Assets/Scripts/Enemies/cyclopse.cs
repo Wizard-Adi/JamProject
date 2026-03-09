@@ -31,12 +31,17 @@ public class cyclopse : MonoBehaviour, Damagable
     private bool _isBusy = false;
     private bool _targetReached = false;
 
+    private AudioSource _audioSourceC;
+    public AudioClip damage;
+    public AudioClip attack;
+
     private void Start()
     {
 
         Health = 10;
 
         _anim = GetComponentInChildren<Animator>();
+        _audioSourceC = GetComponent<AudioSource>();
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         GameObject shelterObject = GameObject.FindGameObjectWithTag("Shelter");
@@ -134,6 +139,9 @@ public class cyclopse : MonoBehaviour, Damagable
         // for laser
         _anim.SetBool("FireLazer", true);
         LazerObject.SetActive(true);
+
+        PlaySFX(attack);
+
         _anim.SetBool("AtTarget", true);
 
         yield return new WaitForSeconds(1.0f);
@@ -165,6 +173,8 @@ public class cyclopse : MonoBehaviour, Damagable
 
         Health--;
 
+        PlaySFX(damage);
+
         Debug.Log($"Cyclopse Health: {Health}");
 
         if (Health < 1)
@@ -186,5 +196,11 @@ public class cyclopse : MonoBehaviour, Damagable
         yield return new WaitForSeconds(1.0f);
 
         //_isBusy = false;
+    }
+
+    void PlaySFX(AudioClip clip)
+    {
+        _audioSourceC.clip = clip;
+        _audioSourceC.Play();
     }
 }

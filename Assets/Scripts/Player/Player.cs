@@ -7,19 +7,28 @@ using UnityEngine.Animations;
 public class Player : MonoBehaviour, Damagable
 {
     public UIManager P_hp;
+    public SpawnManager P_dead;
 
     private Rigidbody2D _rigidBody;
     private Animator _anim;
     private SpriteRenderer _sprite;
+
     [SerializeField]
-    private float _playerSpeed = 3.0f;
+    private float _playerSpeed = 5.0f;
     private Vector2 _playerMovement;
 
     public float dashSpeed = 20f;
     public float dashDuration = 0.20f;
-    public float dashCooldown = 1f;
+    public float dashCooldown = 0.5f;
+
     bool isDashing = false;
     bool canDash = false;
+
+    private AudioSource _audioSource;
+
+    public AudioClip slashClip;
+    public AudioClip dashClip;
+    public AudioClip damageClip;
 
     public int Health{get;set;}
     void Awake()
@@ -27,6 +36,7 @@ public class Player : MonoBehaviour, Damagable
         _rigidBody = GetComponent<Rigidbody2D>();
         _anim = GetComponentInChildren<Animator>();
         _sprite = GetComponentInChildren<SpriteRenderer>();
+        _audioSource = GetComponent<AudioSource>();
 
         Health = 5;
         P_hp.playerHealth = Health;
@@ -36,13 +46,21 @@ public class Player : MonoBehaviour, Damagable
 
     private void Update()
     {
+        _ChangeMood += Time.deltaTime;
 
         if (isDashing)
             return;
 
         //_rigidBody.velocity = _playerMovement * _playerSpeed;
+
+        if (_ChangeMood >= 15.0f)
+        {
+            _ChangeMood = 0;
+            PlayerMood();
+        }
+
         
-        if (Input.GetKeyDown(KeyCode.Space) && canDash)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
             StartCoroutine(Dash());
         }
@@ -85,14 +103,37 @@ public class Player : MonoBehaviour, Damagable
         if (Input.GetMouseButtonDown(0))
         {
             _anim.SetTrigger("Attack");
+
+            StartCoroutine(SlashEffect());
+
+            //PlaySFX(slashClip);
         }
+    }
+
+    IEnumerator SlashEffect()
+    {
+        PlaySFX(slashClip);
+        yield return new WaitForSeconds(0.4f);
+        PlaySFX(slashClip);
     }
 
     public void Damage()
     {
         //Debug.Log("player got hit !");
+
+        PlaySFX(damageClip);
+
         Health--;
         P_hp.playerHealth = Health;
+
+        //P_dead._stopSpawning = true;
+        if (Health <=0)
+        {
+            P_dead.OnPlayerDeath();
+            Destroy(gameObject);
+            Application.Quit();
+        }
+
         Debug.Log($"players current Health {Health}");
     }
 
@@ -112,10 +153,61 @@ public class Player : MonoBehaviour, Damagable
         canDash = false;
         isDashing = true;
         _rigidBody.velocity = new Vector2(_playerMovement.x * dashSpeed, _playerMovement.y* dashSpeed);
+
+        //dash clip effect
+        PlaySFX(dashClip);
+
         yield return new WaitForSeconds(dashDuration);
         isDashing = false;
 
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
+    }
+
+    private int _playerMood;
+    private int _moodDuration;
+    private float _ChangeMood;
+
+    void PlayerMood()
+    {
+        _playerMood = Random.Range(0, 4);
+
+        switch (_playerMood)
+        {
+            case 0:
+                Debug.Log("Neutral");
+                // Dashing speed  = 15.0f; , Dashing cooldown = 0.6f, Attack Damage ?
+                dashSpeed = 15f;
+                dashDuration = 0.20f;
+                dashCooldown = 0.6f;
+                break;
+            case 1:
+                Debug.Log("Sad");
+                // Dashing speed  = 10.0f; , Dashing cooldown = 0.75f, Attack Damage ?
+                dashSpeed = 10f;
+                dashDuration = 0.20f;
+                dashCooldown = 0.75f;
+                break;
+            case 2:
+                Debug.Log("Happy");
+                // Dashing speed  = 20.0f; , Dashing cooldown = 0.5f, Attack Damage ?
+                dashSpeed = 20f;
+                dashDuration = 0.20f;
+                dashCooldown = 0.5f;
+                break;
+            case 3:
+                Debug.Log("Raged");
+                // Dashing speed  = 28.0f; , Dashing cooldown = 0.3f, Attack Damage ?
+                dashSpeed = 28f;
+                dashDuration = 0.20f;
+                dashCooldown = 0.3f;
+                break;
+        }
+    }
+
+    void PlaySFX(AudioClip clip)
+    {
+        _audioSource.clip = clip;
+        _audioSource.Play();
     }
 }
