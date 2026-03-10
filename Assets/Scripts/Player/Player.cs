@@ -7,6 +7,15 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour, Damagable
 {
+    public GGscript gg;
+    public GGscript gg2;
+    public Minotaur Minotaur;
+    public cyclopse Cyclopse;
+
+    public int PlayerAttackPower;
+
+    public int PlayerNeutralDamage = 0;
+
     public UIManager P_hp;
     public SpawnManager P_dead;
     public PauseMenu deadinfo;
@@ -32,6 +41,8 @@ public class Player : MonoBehaviour, Damagable
     public AudioClip dashClip;
     public AudioClip damageClip;
 
+    private int _enemyDamage;
+
     public int Health{get;set;}
     void Awake()
     {
@@ -40,8 +51,19 @@ public class Player : MonoBehaviour, Damagable
         _sprite = GetComponentInChildren<SpriteRenderer>();
         _audioSource = GetComponent<AudioSource>();
 
-        Health = 5;
+        Health = 50;
         P_hp.playerHealth = Health;
+
+        PlayerNeutralDamage = 8;
+
+        PlayerAttackPower = PlayerNeutralDamage;
+
+        //gg.PlayerAttackPower = PlayerNeutralDamage;
+        //gg2.PlayerAttackPower = PlayerNeutralDamage;
+        //Minotaur.PlayerAttackPower = PlayerNeutralDamage;
+        //Cyclopse.PlayerAttackPower = PlayerNeutralDamage;
+
+        P_hp.PlayerMoodStore = "Neutral";
 
         canDash = true;
     }
@@ -50,7 +72,7 @@ public class Player : MonoBehaviour, Damagable
     {
         _ChangeMood += Time.deltaTime;
 
-        if (_ChangeMood >= 15.0f)
+        if (_ChangeMood >= 30.0f)
         {
             _ChangeMood = 0;
             PlayerMood();
@@ -70,7 +92,7 @@ public class Player : MonoBehaviour, Damagable
         //}
 
         
-        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        if ((Input.GetKeyDown(KeyCode.LeftShift) || (Input.GetKeyDown(KeyCode.Space)) && canDash))
         {
             StartCoroutine(Dash());
         }
@@ -81,20 +103,20 @@ public class Player : MonoBehaviour, Damagable
 
     void BoundaryCheck()
     {
-        if (transform.position.x <= -9.7f)
+        if (transform.position.x <= -9.5f)
         {
             transform.position = new Vector2(-9.3f, transform.position.y);
         }
-        else if (transform.position.x >= 21f)
+        else if (transform.position.x >= 15.2f)
         {
-            transform.position = new Vector2(20f, transform.position.y);
+            transform.position = new Vector2(15f, transform.position.y);
         }
         
         if (transform.position.y <= -7.1f)
         {
             transform.position = new Vector2(transform.position.x, -7f);
         }
-        else if (transform.position.y >= 9.5f)
+        else if (transform.position.y >= 9.2f)
         {
             transform.position = new Vector2(transform.position.x, 9f);
         }
@@ -143,7 +165,7 @@ public class Player : MonoBehaviour, Damagable
 
     IEnumerator SlashEffect()
     {
-        PlaySFX(slashClip);
+        //PlaySFX(slashClip);
         yield return new WaitForSeconds(0.4f);
         PlaySFX(slashClip);
     }
@@ -151,10 +173,11 @@ public class Player : MonoBehaviour, Damagable
     public void Damage()
     {
         //Debug.Log("player got hit !");
+        _enemyDamage = Random.Range(5, 8);
 
         PlaySFX(damageClip);
 
-        Health--;
+        Health -= _enemyDamage;
         P_hp.playerHealth = Health;
 
         //P_dead._stopSpawning = true;
@@ -213,30 +236,81 @@ public class Player : MonoBehaviour, Damagable
             case 0:
                 Debug.Log("Neutral");
                 // Dashing speed  = 15.0f; , Dashing cooldown = 0.6f, Attack Damage ?
+
+                P_hp.PlayerMoodStore = "Neutral";
+
+
                 dashSpeed = 15f;
                 dashDuration = 0.20f;
                 dashCooldown = 0.6f;
+
+                PlayerAttackPower = PlayerNeutralDamage;
+
+                //gg.PlayerAttackPower = PlayerNeutralDamage;
+                //gg2.PlayerAttackPower = PlayerNeutralDamage;
+                //Minotaur.PlayerAttackPower = PlayerNeutralDamage;
+                //Cyclopse.PlayerAttackPower = PlayerNeutralDamage;
+
                 break;
             case 1:
                 Debug.Log("Sad");
                 // Dashing speed  = 10.0f; , Dashing cooldown = 0.75f, Attack Damage ?
+
+                P_hp.PlayerMoodStore = "Sad";
+
+
                 dashSpeed = 10f;
                 dashDuration = 0.20f;
                 dashCooldown = 0.75f;
+
+                PlayerAttackPower = PlayerNeutralDamage - 4;
+
+
+                //gg.PlayerAttackPower = PlayerNeutralDamage - 4;
+                //gg2.PlayerAttackPower = PlayerNeutralDamage - 4;
+                //Minotaur.PlayerAttackPower = PlayerNeutralDamage - 4;
+                //Cyclopse.PlayerAttackPower = PlayerNeutralDamage - 4;
+
                 break;
             case 2:
                 Debug.Log("Happy");
                 // Dashing speed  = 20.0f; , Dashing cooldown = 0.5f, Attack Damage ?
+
+                P_hp.PlayerMoodStore = "Happy";
+
+
                 dashSpeed = 20f;
                 dashDuration = 0.20f;
                 dashCooldown = 0.5f;
+
+                PlayerAttackPower = PlayerNeutralDamage + 7;
+
+
+                //gg.PlayerAttackPower = PlayerNeutralDamage + 7;
+                //gg2.PlayerAttackPower = PlayerNeutralDamage + 7;
+                //Minotaur.PlayerAttackPower = PlayerNeutralDamage + 7;
+                //Cyclopse.PlayerAttackPower = PlayerNeutralDamage + 7;
+
                 break;
             case 3:
                 Debug.Log("Raged");
                 // Dashing speed  = 28.0f; , Dashing cooldown = 0.3f, Attack Damage ?
+
+                P_hp.PlayerMoodStore = "Raged";
+
+
                 dashSpeed = 28f;
                 dashDuration = 0.20f;
                 dashCooldown = 0.3f;
+
+                PlayerAttackPower = PlayerNeutralDamage + 12;
+
+
+                //gg.PlayerAttackPower = PlayerNeutralDamage + 12;
+                //gg2.PlayerAttackPower = PlayerNeutralDamage + 12;
+                //Minotaur.PlayerAttackPower = PlayerNeutralDamage + 12;
+                //Cyclopse.PlayerAttackPower = PlayerNeutralDamage + 12;
+
                 break;
         }
     }

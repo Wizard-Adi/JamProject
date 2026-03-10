@@ -10,6 +10,8 @@ public class Shelter : MonoBehaviour, Damagable
     public SpawnManager EnemiesSpawn;
     public PauseMenu destroyinfo;
 
+    private int _enemyDamage;
+
     //[SerializeField]
     //public GameObject[] Shelters;
     //private int i = 0;
@@ -18,7 +20,7 @@ public class Shelter : MonoBehaviour, Damagable
 
     void Start()
     {
-        Health = 10;
+        Health = 100;
         shelterHP.ShelterHealth = Health;
 
         //_shelterSprite = GetComponent<SpriteRenderer>();
@@ -43,7 +45,9 @@ public class Shelter : MonoBehaviour, Damagable
     }
     public void Damage()
     {
-        Health--;
+        _enemyDamage = Random.Range(5, 10);
+
+        Health -= _enemyDamage;
         shelterHP.ShelterHealth = Health;
 
         if (Health <= 0)

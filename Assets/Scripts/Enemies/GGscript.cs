@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class GGscript : MonoBehaviour, Damagable
 {
+    public UIManager H_s;
+    private int _enemyPoints = 10;
+
     public int Health { get; set; }
 
     private Animator _anim;
 
     [SerializeField]
-    private float _speed = 1.5f;
+    private float _speed = 5.5f;
 
     [SerializeField]
     private Transform _spriteTransform;
@@ -21,13 +24,17 @@ public class GGscript : MonoBehaviour, Damagable
     public Transform player;
     private Transform _activeTarget;
 
-    public float maxChaseDistance = 5.0f;
-    public float attackRange = 1.0f;
+    public float maxChaseDistance = 7.0f;
+    public float attackRange = 0.8f;
 
     //public GameObject LazerObject;
 
     private bool _isBusy = false;
     private bool _targetReached = false;
+
+    //public int PlayerAttackPower = 0;
+
+    private Player playerScript;
 
     //private AudioSource _audioSourceG;
     //public AudioClip damage;
@@ -36,17 +43,25 @@ public class GGscript : MonoBehaviour, Damagable
     private void Start()
     {
 
-        Health = 5;
+        Health = 15;
 
         _anim = GetComponentInChildren<Animator>();
+
         //_audioSourceG = GetComponent<AudioSource>();
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         GameObject shelterObject = GameObject.FindGameObjectWithTag("Shelter");
+        GameObject uiManager = GameObject.FindGameObjectWithTag("UiManager");
+
+        if (uiManager != null)
+        {
+            H_s = uiManager.GetComponent<UIManager>(); 
+        }
 
         if (playerObj != null && shelterObject != null)
         {
             player = playerObj.transform;
+            playerScript = playerObj.GetComponent<Player>();  
             shelter = shelterObject.transform;
         }
         if (_spriteTransform == null)
@@ -173,7 +188,7 @@ public class GGscript : MonoBehaviour, Damagable
         _anim.SetBool("CanAttack", false);
         _anim.SetBool("AtTarget", false);
 
-        Health--;
+        Health -= playerScript.PlayerAttackPower;
 
         //PlaySFX(damage);
 
@@ -181,6 +196,8 @@ public class GGscript : MonoBehaviour, Damagable
 
         if (Health < 1)
         {
+            H_s.HighScore += _enemyPoints;
+
             Destroy(gameObject);
             return;
         }

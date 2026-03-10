@@ -231,6 +231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c18c04be6ac9d444baec0436aa98f1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  H_s: {fileID: 0}
   _speed: 1.5
   _spriteTransform: {fileID: 0}
   shelter: {fileID: 0}

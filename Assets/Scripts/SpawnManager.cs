@@ -11,6 +11,11 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] enemies;
 
+    public int PlayerScore = 0;
+
+    public int minSpawnTime = 3;
+    public int maxSpawnTime = 8;
+
     private bool _stopSpawning = false;
     // Start is called before the first frame update
 
@@ -18,40 +23,42 @@ public class SpawnManager : MonoBehaviour
     {
         StartSpawning();
     }
+
+    public void Update()
+    {
+        if (PlayerScore <= 100)
+        {
+            minSpawnTime = 3;
+            maxSpawnTime = 8;
+        }
+        else if (PlayerScore <= 200)
+        {
+            minSpawnTime = 2;
+            maxSpawnTime = 6;
+        }
+        else if(PlayerScore >= 201)
+        {
+            minSpawnTime = 1;
+            maxSpawnTime = 5;
+        }
+    }
+
     public void StartSpawning()
     {
         //StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnEnemiesRoutine());
     }
-    // spawn game objects every 5 seconds
-    // create a coroutine of type IEnumerator -- yield events
-    // while loop
 
-    //IEnumerator SpawnEnemyRoutine()
-    //{
-    //    yield return new WaitForSeconds(3.0f);
-    //    while (_stopSpawning == false)
-    //    {
-    //        Vector3 posToSpawn = new Vector3(11.5f, Random.Range(-4f, 4f), 0);
-    //        GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
-    //        newEnemy.transform.parent = _enemyContainer.transform;
-    //        yield return new WaitForSeconds(5.0f);
-    //    }
-    //    // while loop (infinite loop )
-    //    // instantiate enemy prefab
-    //    //yield wait for 5 sec
-    //}
-    
     IEnumerator SpawnEnemiesRoutine()
     {
         yield return new WaitForSeconds(3.0f);
         // every 3 - 7 seconds, spawn in a powerup
         while (_stopSpawning == false)
         {
-            Vector3 postToSpawn = new Vector3(11.5f, Random.Range(-4f, 4f), 0);
+            Vector3 postToSpawn = new Vector3(20.5f, Random.Range(-4f, 4f), 0);
             int randomEnemy = Random.Range(0, 3);
             Instantiate(enemies[randomEnemy], postToSpawn, Quaternion.identity);
-            yield return new WaitForSeconds(Random.Range(3, 8));// here 8 is exclusive...
+            yield return new WaitForSeconds(Random.Range(minSpawnTime, maxSpawnTime)); 
         }
     }
     

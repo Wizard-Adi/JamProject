@@ -5,13 +5,19 @@ using UnityEngine;
 
 public class cyclopse : MonoBehaviour, Damagable
 {
+    public UIManager H_s;
+    private int _enemyPoints = 20;
+
+    //public int PlayerAttackPower = 0;
+
+    private Player playerScript;
 
     public int Health { get; set; }
 
     private Animator _anim;
 
     [SerializeField]
-    private float _speed = 1.5f;
+    private float _speed = 3.5f;
 
     [SerializeField]
     private Transform _spriteTransform;
@@ -24,7 +30,7 @@ public class cyclopse : MonoBehaviour, Damagable
     private Transform _activeTarget; 
 
     public float maxChaseDistance = 3.0f;
-    public float attackRange = 1.0f;
+    public float attackRange = 1.3f;
 
     public GameObject LazerObject;
 
@@ -38,17 +44,26 @@ public class cyclopse : MonoBehaviour, Damagable
     private void Start()
     {
 
-        Health = 10;
+        Health = 35;
 
         _anim = GetComponentInChildren<Animator>();
-       // _audioSourceC = GetComponent<AudioSource>();
+        // _audioSourceC = GetComponent<AudioSource>();
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         GameObject shelterObject = GameObject.FindGameObjectWithTag("Shelter");
+        GameObject uiManager = GameObject.FindGameObjectWithTag("UiManager");
+
+        if (uiManager != null)
+        {
+            H_s = uiManager.GetComponent<UIManager>();
+        }
+
 
         if (playerObj != null && shelterObject != null )
         {
             player = playerObj.transform;
+            playerScript = playerObj.GetComponent<Player>();
+
             shelter = shelterObject.transform;
         }
         if (_spriteTransform == null)
@@ -171,14 +186,16 @@ public class cyclopse : MonoBehaviour, Damagable
         _anim.SetBool("FireLazer", false);
         _anim.SetBool("AtTarget", false);
 
-        Health--;
+        Health -= playerScript.PlayerAttackPower;
 
         //PlaySFX(damage);
 
         Debug.Log($"Cyclopse Health: {Health}");
 
-        if (Health < 1)
+        if (Health <= 0)
         {
+            H_s.HighScore += _enemyPoints;
+
             Destroy(gameObject);
             return;
         }
